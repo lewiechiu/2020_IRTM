@@ -76,12 +76,27 @@ def calc_tfidf(idf, dict_ind):
                 weight[word] = weight[word] * idf[word]
             # print(weight)
             with open("tfidf/{}".format(file), "w") as f:
+                f.write(str(len(weight))+ "\n")
+                f.write("t_index tf-idf\n")
                 for word in weight:
                     f.write("{} {}\n".format(dict_ind[word], weight[word]))
                 f.close()
             # return
     pass
 
+def construct_tfidf_vector(freq):
+
+    pass
+
+def cosine(doc1, doc2):
+    with open("tfidf/{}.txt".format(doc1), "r") as f:
+        content = f.readlines()
+        content = [line.split(" ") for line in content]
+        print(content)
+        f.close()
+
+
+    pass
 
 
 
