@@ -39,3 +39,5 @@ The program can be broke into several phases.
     1. Use *tokenization* to tokenize the whole document.
     2. For each term, calculate its *tf-idf* score.
     3. Generate a vector with size equal to the dictioanry size, and fill the tfidf scores into the corresponding position of corpus.
+
+## Cosine Similarity
