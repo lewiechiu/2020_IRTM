@@ -34,9 +34,6 @@ def read_all_doc():
                     text = text.split(" ")
 
                     text = tokenization(text)
-                    for word in text:
-                        term_freq[word] = term_freq.setdefault(word, 0) + 1
-                    # print(text)
                     corpus.update(text)
                     
             for word in corpus:
@@ -91,10 +88,33 @@ def construct_tfidf_vector(freq):
 def cosine(doc1, doc2):
     with open("tfidf/{}.txt".format(doc1), "r") as f:
         content = f.readlines()
-        content = [line.split(" ") for line in content]
-        print(content)
+        content = content[2:]
+        
+        content = [line.replace("\n", "").split(" ") for line in content]
+        # print(content)
+        doc1_vec = np.zeros(14136)
+        for line in content:
+            ind = line[0]
+            value = line[1]
+            doc1_vec[int(ind)] = float(value)
         f.close()
 
+    print(doc1_vec)
+
+    with open("tfidf/{}.txt".format(doc2), "r") as f:
+        content = f.readlines()
+        content = content[2:]
+        content = [line.replace("\n", "").split(" ") for line in content]
+        # print(content)
+        doc2_vec = np.zeros(14136)
+        for line in content:
+            
+            ind = line[0]
+            value = line[1]
+            doc2_vec[int(ind)] = float(value)
+        f.close()
+
+    print(doc2_vec)
 
     pass
 
@@ -113,5 +133,7 @@ if __name__ == "__main__":
         cnt_ind += 1
 
     calc_tfidf(inv_doc_freq, dictionary_index)
+
+    cosine(123, 456)
 
     pass
