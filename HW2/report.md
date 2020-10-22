@@ -54,3 +54,5 @@ The program can be broke into several phases.
    1. Fill the value into the tfidf file given in the text vector file.
    2. Others remain zero if not mentioned.
 4. Compute cosine similarity provided by scikit learn.
+
+Finally, the cosine similarity between document 1 and 2: **0.197**
