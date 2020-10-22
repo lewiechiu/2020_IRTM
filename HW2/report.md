@@ -22,7 +22,7 @@ output
 ```
 reading all documents...
 writing vector files...
-cosine sim for doc 1 and 8: [[0.26809512]]
+cosine sim for doc 1 and 2: [[0.19682828]]
 ```
 * Before running the code, make sure the directory *IRTM* is present.
 * Output will be saved in *dictionary.txt* and *tfidf* folder.
