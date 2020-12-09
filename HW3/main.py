@@ -72,17 +72,6 @@ def read_all_doc():
                 doc_freq[word] = doc_freq.setdefault(word, 0) + 1
     pass
 
-def write_dictionary(doc_freq):
-    cnt = 0
-    with open("dictionary.txt", "w") as f:
-        f.write("t_index,term,df\n")
-        
-        for k, v in doc_freq.items():
-            f.write("{} {} {}\n".format(cnt, k, v))
-            cnt += 1
-        f.close()
-    return 
-
 def read_category():
 
     with open("category.txt", "r") as f:
@@ -102,82 +91,6 @@ def read_category():
                 categories[int(number)] = category
     return categories
 
-
-def calc_tfidf(idf, dict_ind):
-    for root, dirs, files in os.walk("IRTM"):
-        for file in files:
-            
-            if ".txt" not in file:
-                continue
-            
-            filename = os.path.join(root, file)
-            weight = dict()
-            
-            # Calculate tf from filename
-            with open(filename, "r") as f:
-                contents = f.readlines()
-                for content in contents:
-                    text = content.lower()
-                    text = text.split(" ")
-
-                    text = tokenization(text)
-                    for word in text:
-                        weight[word] = weight.setdefault(word, 0) + 1
-                f.close()
-
-            # Calculate tf-idf score    
-            for word in weight:
-                weight[word] = weight[word] * idf[word]
-            
-            # Write file
-            with open("tfidf/{}".format(file), "w") as f:
-                f.write(str(len(weight))+ "\n")
-                f.write("t_index tf-idf\n")
-                for word in weight:
-                    f.write("{} {}\n".format(dict_ind[word], weight[word]))
-                f.close()
-            # return
-    pass
-
-def generate_term_index(inv_doc_freq):
-    dictionary_index = {}
-    cnt_ind = 0
-    for word in inv_doc_freq:
-        dictionary_index[word] = cnt_ind
-        cnt_ind += 1
-    return dictionary_index
-
-def cosine(doc1, doc2):
-    with open("tfidf/{}.txt".format(doc1), "r") as f:
-        content = f.readlines()
-        content = content[2:]
-        
-        content = [line.replace("\n", "").split(" ") for line in content]
-        
-        doc1_vec = np.zeros(14136)
-        for line in content:
-            ind = line[0]
-            value = line[1]
-            doc1_vec[int(ind)] = float(value)
-        f.close()
-
-        doc1_vec = normalize(doc1_vec.reshape(1, -1))
-
-    with open("tfidf/{}.txt".format(doc2), "r") as f:
-        content = f.readlines()
-        content = content[2:]
-        content = [line.replace("\n", "").split(" ") for line in content]
-        
-        doc2_vec = np.zeros(14136)
-        for line in content:
-            
-            ind = line[0]
-            value = line[1]
-            doc2_vec[int(ind)] = float(value)
-        f.close()
-
-        doc2_vec = normalize(doc2_vec.reshape(1, -1))
-    return cosine_similarity(doc1_vec, doc2_vec)
 
 def countDocsInClass(doc_category):
     # Counts number of examples in each category
@@ -220,22 +133,6 @@ def extractTokens(tokens, document):
         else:
             corpus.append(text)
     return corpus
-
-def TrainMultinomialNB(D, doc_category, category_full_document):
-    full_corpus = []
-    for k, value in category_full_document.items():
-        full_corpus.extend(value)
-    full_corpus = set(full_corpus)
-
-    prior_probabilities = countDocsInClass(doc_category)
-    conditional_prob = np.zeros((len(full_corpus), 13))
-    for class_ in range(1, 14):
-        for idx, term in enumerate(full_corpus):
-            count_term = category_full_document[class_].count(term)
-            conditional_prob[idx][class_] = count_term
-        #  Count number of occurence of a term in "class"
-        # Collect all text of the same class.
-    return
 
 def expected_mutual_information(category_full_document, doc_category, documents):
     category_doc = {k: [] for k in range(1, 14)}
@@ -359,24 +256,6 @@ if __name__ == "__main__":
             count_term = category_full_document[class_].count(term)
             conditional_prob[idx, class_ - 1] = (count_term + 1) / (len(category_full_document[class_]) + feature_size * 13)
 
-    # # calculate the variability
-    # term_importance = {}
-    # for idx, term in enumerate(full_corpus):
-    #     variability = np.var(conditional_prob[idx, :])
-    #     # print(term, variability)
-    #     term_importance[term] = variability
-    # term_importance = {k: v for k, v in sorted(term_importance.items(), key=lambda x: x[1], reverse=True)}
-    # selected_term = set()
-    # cnt = 0
-    # for term, importance in term_importance.items():
-    #     print(term, importance)
-    #     selected_term.add(term)
-    #     cnt += 1
-    #     if cnt == feature_size:
-    #         break
-    
-
-
     # Testing
     predictions = {}
     for idx, test_set_id in enumerate(test_set_ids):
@@ -385,12 +264,8 @@ if __name__ == "__main__":
         print(idx, test_set_id)
         for class_ in range(1, 14):
             for token in tokens:
-                # print(conditional_prob[corpus_position[token]][class_ - 1])
-                # if conditional_prob[corpus_position[class_][token]][class_ - 1] == 0:
-                #     print("zero occurred")
                 if token not in selected_terms:
                     continue
-                # print(corpus_position[class_])
                 score[class_ - 1] += np.log(conditional_prob[corpus_position[token]][class_ - 1])
             score[class_ - 1] += np.log(category_prior[class_])
         # print(score)
