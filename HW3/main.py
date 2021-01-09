@@ -13,7 +13,7 @@ stopwords = ["a","about","above","after","again","against","ain","all","am","an"
 stopwords = set(stopwords)
 stemmer = PorterStemmer()
 
-feature_size = 190
+feature_size = 230
 
 term_freq = dict()
 tfidf = dict()
